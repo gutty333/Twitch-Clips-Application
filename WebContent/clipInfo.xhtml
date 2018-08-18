@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+	
+	<!-- loading the comment content for our selected clip page -->
+	<f:metadata>
+	  <f:event type="preRenderView" listener="#{commentController.loadComments(twitchClip)}"/>
+	</f:metadata>
+	
+	<h:head>
+		<title>Clip Page</title>
+	</h:head>
+	
+	
+	<!-- Clip Information Section -->
+	<h:body>
+		<iframe
+		   src="#{twitchClip.embeddedURL}"
+		   height="450"
+		   width="800"
+		   frameborder="0"
+		   scrolling="no"
+		   allowfullscreen="true"
+	   		>
+		</iframe>
+		<br/>
+		<h:button value="Back" outcome="index"></h:button>
+		<br/>
+		<br/>
+		
+		<h3>Title: #{twitchClip.title}</h3>
+		<h3>Game: #{twitchClip.game}</h3>
+		<h3>Description: #{twitchClip.description}</h3>
+		
+		
+		<!-- Clip Rating Section, users can either downvote or upvote a clip -->
+		<table cellpadding="10">
+			<tr>
+				<td align="center">
+					#{twitchClip.upvotes}
+					<br/>
+					
+					<h:form>
+						<h:commandLink value="Upvote" action="#{twitchClipController.clipUpvote()}">
+							<f:param name="currentID" value="#{twitchClip.id}"></f:param>
+						</h:commandLink>
+					</h:form>
+				</td>
+				
+				<td align="center">
+					#{twitchClip.downvotes}
+					<br/>
+					
+					<h:form>
+						<h:commandLink value="Downvote" action="#{twitchClipController.clipDownvote()}">
+							<f:param name="currentID" value="#{twitchClip.id}"></f:param>
+						</h:commandLink>
+					</h:form>
+				</td>
+			</tr>
+		</table>
+		<br/><br/>
+		
+		
+		<!-- Area for the user to post comments -->
+		<h3>Post Comment</h3>
+		<h:form>
+			Name: <h:inputText value="#{comment.author}"/>
+			<br/><br/>
+			
+			Comment: 
+			<br/>
+			<h:inputTextarea rows="10" cols="30" value="#{comment.commentPost}"/>
+			<br/>
+			<br/>
+			
+			<h:commandButton value="Post Comment" action="#{commentController.addComment(comment)}">
+				<f:param name="currentID" value="#{twitchClip.id}"></f:param>
+			</h:commandButton>
+		</h:form>
+		<br/><br/>
+		
+		
+		<!-- Section to view all the comments associated with this clip -->
+		<h3>Comments</h3>
+		<hr/>
+		<br/>
+		
+		<ui:repeat var="current" value="#{commentController.clipComments}">
+			<h4>#{current.author} : #{current.datePosted}</h4>
+			<p>#{current.commentPost}</p>
+			<hr/>
+			<br/>
+		</ui:repeat>
+		
+	</h:body>
+</html>
